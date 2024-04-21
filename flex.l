@@ -1,14 +1,16 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+
+    #include "parser.tab.h"
 %}
 
 %option noyywrap
 
-OPEN-CUR \{
-CLOS-CUR \}
-OPEN-BRA \[
-CLOS-BRA \]
+OPEN_CUR \{
+CLOS_CUR \}
+OPEN_BRA \[
+CLOS_BRA \]
 
 WHITESPACE [ \t\r\n]
 STRING \"([^\\"]|[\\]([\\bnrtf/"]|u[0-9a-fA-F]{4}))*\"
@@ -17,27 +19,25 @@ COMMA ,
 COLON :
 TRUE true
 FALSE false
-NULL-VALUE null
+NULL_VALUE null
 
 %%
 
-{OPEN-CUR} { printf("<token, {>\n"); }
-{CLOS-CUR} { printf("<token, }>\n"); }
-{OPEN-BRA} { printf("<token, [>\n"); }
-{CLOS-BRA} { printf("<token, ]>\n"); }
+{OPEN_CUR} { return t_oc; }
+{CLOS_CUR} { return t_cc; }
+{OPEN_BRA} { return t_ob; }
+{CLOS_BRA} { return t_cb; }
 
-{STRING} { printf("<token, %s>\n", yytext); }
-{NUMBER} { printf("<token, %s>\n", yytext); }
-{COMMA} { printf("<token, %s>\n", yytext); }
-{COLON} { printf("<token, %s>\n", yytext); }
-{TRUE} { printf("<token, %s>\n", yytext); }
-{FALSE} { printf("<token, %s>\n", yytext); }
-{NULL-VALUE} { printf("<token, %s>\n", yytext); }
+{STRING} { return t_str; }
+{NUMBER} { return t_num; }
+{COMMA} { return t_com; }
+{COLON} { return t_col; }
+{TRUE} { return t_tru; }
+{FALSE} { return t_fal; }
+{NULL_VALUE} { return t_nul; }
 
 {WHITESPACE} ;
-%%
 
-int main() {
-    yylex();
-    return 0;
-}
+. { printf("Invalid character: %s\n", yytext); }
+
+%%
