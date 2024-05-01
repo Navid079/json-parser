@@ -6,6 +6,7 @@
 %}
 
 %option noyywrap
+%option yylineno
 
 OPEN_CUR \{
 CLOS_CUR \}

@@ -2,22 +2,23 @@
     #include <stdio.h>
     #include <stdlib.h>
 
-    char* yyerror (char*);
+    void yyerror (char*);
     int yylex();
     extern FILE* yyin;
+    extern int yylineno;
 %}
 
-%token t_oc
-%token t_cc
-%token t_ob
-%token t_cb
-%token t_str
-%token t_num
-%token t_com
-%token t_col
-%token t_tru
-%token t_fal
-%token t_nul
+%token t_oc         // {
+%token t_cc         // }
+%token t_ob         // [
+%token t_cb         // ]
+%token t_str        // "sdasd"
+%token t_num        // -12.4E-1
+%token t_com        // ,
+%token t_col        // :
+%token t_tru        // true
+%token t_fal        // false
+%token t_nul        // null
 
 %start json
 
@@ -36,7 +37,7 @@ value:
     t_fal |
     t_nul |
     object { printf("An object!\n"); } |
-    array { printf("An Array!\n"); }
+    array { printf("An array!\n"); }
     ;
 
 object:
@@ -49,7 +50,7 @@ keyvalues:
     ;
 
 nonempty_keyvalues:
-    nonempty_keyvalues keyvalue t_com |
+    nonempty_keyvalues t_com keyvalue |
     keyvalue
     ;
 
@@ -73,7 +74,9 @@ nonempty_values:
 
 %%
 
-char* yyerror (char* msg) {return msg;}
+void yyerror (char* msg) {
+    printf("%s in line %d\n", msg, yylineno);
+}
 
 int main(int argc, char** argv) {
     if (argc != 2) {
